@@ -1,10 +1,10 @@
 from pyspark.sql import SparkSession
 from datetime import datetime, date
 from pyspark.sql import Row
-from delta import *
+# from delta import *
 
 
-builder = SparkSession.builder.appName("devcontainer").remote("sc://spark:15002")
+builder = SparkSession.builder.appName("spark_connect_app").remote("sc://spark:15002")
 spark = builder.getOrCreate()
 # spark = configure_spark_with_delta_pip(builder).getOrCreate()
 
@@ -26,7 +26,7 @@ df = spark.read.format("delta").load("s3a://delta-lake/my_table")
 # Display Delta Table
 df.show()
 
-DeltaTable.forPath(spark, "s3a://delta-lake/my_table").toDF().show()
+# DeltaTable.forPath(spark, "s3a://delta-lake/my_table").toDF().show()
 
 
 

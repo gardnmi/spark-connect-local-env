@@ -1,8 +1,5 @@
 # spark-connect-local-env
 
-[![PyPI - Version](https://img.shields.io/pypi/v/pyspark-delta-no-databricks.svg)](https://pypi.org/project/pyspark-delta-no-databricks)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyspark-delta-no-databricks.svg)](https://pypi.org/project/pyspark-delta-no-databricks)
-
 -----
 
 **Table of Contents**
@@ -30,7 +27,7 @@ git clone https://github.com/gardnmi/spark-connect-local-env.git
 
 ## How to use
 
-After Docker container is running, open you broswer and got to:
+After the container is running, you can access the following services:
 
 1. [localhost:8080](http://localhost:8080/) - Spark Master
 2. [localhost:4040](http://localhost:4040/) - Spark UI
@@ -41,11 +38,6 @@ To log into the Minio web console use the default credentials:
 * Password: `minioadmin`
 
 Run the python main.py file to create a dataframe and write a delta table to Minio.
-
-
-## License
-
-`spark-connect-local-env` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
 
 
 ## Resources:
