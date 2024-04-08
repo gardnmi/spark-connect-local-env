@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pyspark-delta-no-databricks"
+name = "spark-connect-local-env"
 dynamic = ["version"]
 description = 'Building a Delta Lake with Spark without Databricks'
 readme = "README.md"
@@ -30,12 +30,12 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/unknown/pyspark-delta-no-databricks#readme"
-Issues = "https://github.com/unknown/pyspark-delta-no-databricks/issues"
-Source = "https://github.com/unknown/pyspark-delta-no-databricks"
+Documentation = "https://github.com/unknown/spark-connect-local-env#readme"
+Issues = "https://github.com/unknown/spark-connect-local-env/issues"
+Source = "https://github.com/unknown/spark-connect-local-env"
 
 [tool.hatch.version]
-path = "src/pyspark_delta_no_databricks/__about__.py"
+path = "src/spark_connect_local_env/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -62,19 +62,19 @@ dependencies = [
   "mypy>=1.0.0",
 ]
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/pyspark_delta_no_databricks tests}"
+check = "mypy --install-types --non-interactive {args:src/spark_connect_local_env tests}"
 
 [tool.coverage.run]
-source_pkgs = ["pyspark_delta_no_databricks", "tests"]
+source_pkgs = ["spark_connect_local_env", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/pyspark_delta_no_databricks/__about__.py",
+  "src/spark_connect_local_env/__about__.py",
 ]
 
 [tool.coverage.paths]
-pyspark_delta_no_databricks = ["src/pyspark_delta_no_databricks", "*/pyspark-delta-no-databricks/src/pyspark_delta_no_databricks"]
-tests = ["tests", "*/pyspark-delta-no-databricks/tests"]
+spark_connect_local_env = ["src/spark_connect_local_env", "*/spark-connect-local-env/src/spark_connect_local_env"]
+tests = ["tests", "*/spark-connect-local-env/tests"]
 
 [tool.coverage.report]
 exclude_lines = [
