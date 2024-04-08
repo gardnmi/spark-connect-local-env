@@ -31,13 +31,14 @@ git clone https://github.com/gardnmi/spark-connect-local-env.git
 ## How to use
 
 After Docker container is running, open you broswer and got to:
-    1. [localhost:8080](http://localhost:8080/) - Spark Master
-    2. [localhost:4040](http://localhost:4040/) - Spark UI
-    3. [localhost:9000](http://localhost:9000/) - Minio Web Console
 
-To log in to Minio uses the default credentials:
-    * User: `minioadmin`
-    * Password: `minioadmin`
+1. [localhost:8080](http://localhost:8080/) - Spark Master
+2. [localhost:4040](http://localhost:4040/) - Spark UI
+3. [localhost:9000](http://localhost:9000/) - Minio Web Console
+
+To log into the Minio web console use the default credentials:
+* User: `minioadmin`
+* Password: `minioadmin`
 
 Run the python main.py file to create a dataframe and write a delta table to Minio.
 
