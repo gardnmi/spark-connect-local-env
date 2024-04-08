@@ -34,7 +34,7 @@ After Docker container is running, open you broswer and got to:
 
 1. [localhost:8080](http://localhost:8080/) - Spark Master
 2. [localhost:4040](http://localhost:4040/) - Spark UI
-3. [localhost:9000](http://localhost:9000/) - Minio Web Console
+3. [localhost:9001](http://localhost:9001/) - Minio Web Console
 
 To log into the Minio web console use the default credentials:
 * User: `minioadmin`
@@ -54,3 +54,4 @@ Run the python main.py file to create a dataframe and write a delta table to Min
 * [Another Spark Env for Reference](https://github.com/emmc15/pyspark-testing-env/blob/main/docker-compose.yml)
 * [Bitnami Spark Image](https://github.com/bitnami/containers/blob/main/bitnami/spark/README.md)
 * [Delta Lake and Minio Configs](https://stackoverflow.com/questions/75472225/java-lang-classnotfoundexception-class-org-apache-hadoop-fs-s3a-s3afilesystem-n)
+* [Delta Lake Issues with Spark Connect](https://github.com/delta-io/delta/issues/1967)
