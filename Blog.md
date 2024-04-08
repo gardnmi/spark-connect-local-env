@@ -17,15 +17,22 @@ With the looming relase of Spark 4.0 it appears Spark Connect will be the main w
 
 ## Setting up the Environment
 
-### Local Application Setup
+Our environment configuration is contained within a docker-compose file which consists following services:
+1. pyspark application
+2. Minio
+3. Spark Master
+4. Spark Worker
+
+
+### Pyspark Service
 
 The first step in this project is to build the pyspark application that will connect to the remote spark cluster.  We will use Visual Studio Code with the Dev Containers extension to create a containerized environment for the application.
 
 Steps to create the application:
-1. Create a new folder for the project. In this example we will use `spark-connect-local-env`
-2. Open the project in Visual Studio Code
-3. Create a folder called .devcontainer
-4. Inside the .devcontainer folder create a file called devcontainer.json and add the following code to the devcontainer.json file:
+1. Create an empty project folder on your local machine.
+2. Open the project folder in Visual Studio Code
+3. Create a folder called `.devcontainer`
+4. Inside the .devcontainer folder create a file called `devcontainer.json` and add the following code:
 
 ```json
 {
@@ -38,7 +45,9 @@ Steps to create the application:
 }
 ```
 
-5. Inside the .devcontainer folder create a file called docker-compose.yml and add the following code to the docker-compose.yml file:
+* Note: For more information on the devcontainer.json file see the [Visual Studio Code Documentation](https://code.visualstudio.com/docs/remote/containers#_devcontainerjson-reference)
+
+5. Inside the .devcontainer folder create a file called `docker-compose.yml` and add the following code to the docker-compose.yml file:
 
 ```yaml
 version: '3.8'
@@ -50,7 +59,7 @@ services:
       - ..:/workspaces:cached
     command: sleep infinity    
 ```
-6. Create a folder called src in the root of the project and create a file called main.py and add the following code to the main.py file:
+6. Create a folder called `src` in the root of the project and create a file called `main.py` and add the following code:
 
 ```python
 from pyspark.sql import SparkSession
@@ -80,7 +89,7 @@ df = spark.read.format("delta").load("s3a://delta-lake/my_table")
 df.show()
 ```
 
-7. Create a file called requirements.txt in the root of the project and add the following code to the requirements.txt file:
+7. Create a file called `requirements.txt` in the root of the project and add the following code:
 
 ```
 pyspark[connect]==3.5.1
@@ -90,9 +99,7 @@ delta-spark~=3.1.0
   * Note: Use the [Compatablity Matrix for Delta Lake](https://docs.delta.io/latest/releases.html) to choose the correct version of delta-spark
 
 
-When our application container starts we will need to run the `postCreateCommand` to install the required python packages.
-
-8. Create a file called .postCreateCommand.sh in the .devcontainer/conf folder and add the following code to the .postCreateCommand.sh file:
+8. Create a file called `.postCreateCommand.sh` in the .devcontainer/conf folder and add the following code:
 
 ```bash
 # !/bin/bash
@@ -103,17 +110,17 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Our application is now setup and ready to run.  In the next section we will setup our storage solution for out delta lake, Minio.
+* Note: The .postCreateCommand.sh file is used to install the required python packages when our application container is started.
 
 
-### Minio Setup
+### Minio Services
 Minio is an open source object storage server that is compatible with Amazon S3.  We will use Minio to store the delta table created by our pyspark application.
 
 Steps to setup Minio:
-1. Open .devcontainer/docker-compose.yml and append the following code to the docker-compose.yml file:
+1. Open .devcontainer/docker-compose.yml and append the following code:
 
 ```yaml
-... # Existing code
+# Existing Code Above
 
   minio:
     image: minio/minio:latest
@@ -139,7 +146,7 @@ Steps to setup Minio:
       - minio
 ```
 
-2. Create a folder called conf in the .devcontainer folder and create a file called `minio_mc-entrypoint.sh` and add the following code to the minio_mc-entrypoint.sh file:
+2. Create a folder called `conf` in the .devcontainer folder and create a file called `minio_mc-entrypoint.sh` and add the following code:
 
 ```bash
 #/bin/bash  
@@ -149,18 +156,16 @@ Steps to setup Minio:
 exit 0
 ```
 
-Note: The minio service is setup to use the default credentials of minioadmin/minioadmin.  The minio_mc service is used to pre-create a bucket called delta-lake when we start the minio service.
+* Note: The minio service is setup to use the default credentials of minioadmin/minioadmin.  The minio_mc service is used to pre-create a bucket called delta-lake when we start the minio service.
 
-The Minio service is now setup and ready to run.  In the next section we will setup the spark cluster.
-
-### Spark Cluster Setup
-Our spark cluster will consist of a spark master and a spark worker.  We will use the bitnami/spark image to create the spark cluster.
+### Spark Services
+Our spark cluster will consist of a spark master and a spark worker.  We will use the bitnami/spark image as a base for the spark services.
 
 Steps to setup the spark cluster:
-1. Open .devcontainer/docker-compose.yml and append the following code to the docker-compose.yml file:
+1. Open `.devcontainer/docker-compose.yml` and append the following code:
 
 ```yaml
-... # Existing code
+# Existing Code Above
 
   spark:
     build:
@@ -199,9 +204,9 @@ volumes:
   minio-data:
 ```
 
-The default bitnami/spark image does not start the spark connect server on startup and is also missing some jar files that are needed to use delta lake.  We will create a custom Dockerfile that extends the bitnami/spark image and adds the necessary jar files and starts the spark connect server.
+* Note: The default bitnami/spark image does not start the spark connect server on startup and is also missing some jar files that are needed to use delta lake.  We will create a custom Dockerfile that extends the bitnami/spark image and adds the necessary jar files and starts the spark connect server.
 
-2. Create a file called Dockerfile.spark in the .devcontainer folder and add the following code to the Dockerfile.spark file:
+2. Create a file called `Dockerfile.spark` in the .devcontainer folder and add the following code:
 
 ```Dockerfile
 FROM docker.io/bitnami/spark:3.5.1
@@ -219,11 +224,11 @@ RUN curl https://repo1.maven.org/maven2/io/delta/delta-spark_2.12/3.1.0/delta-sp
 RUN curl https://repo1.maven.org/maven2/io/delta/delta-storage/3.1.0/delta-storage-3.1.0.jar --output /opt/bitnami/spark/jars/delta-storage-3.1.0.jar
 ```
 
-To start the spark connect server we need to run the `start-connect-server.sh` script with the argument `--packages org.apache.spark:spark-connect_2.12:3.5.1` on our spark master.
+* Note: To start the spark connect server we need to run the `start-connect-server.sh` script with the argument `--packages org.apache.spark:spark-connect_2.12:3.5.1` on our spark master.
 
-To achieve this, we modified the CMD command in the dockerfile to run a slightly modified version of the run.sh script that the base image uses to start spark.
+  To achieve this, we modified the CMD command in the dockerfile to run a slightly modified version of the run.sh script that the base image uses to start spark.
 
-3. Create a file in .devcontainer/conf called `run-spark.sh` and add the following code to the run-spark.sh file:
+3. Create a file in .devcontainer/conf called `run-spark.sh` and add the following code:
 
 ```bash
 #!/bin/bash
@@ -289,7 +294,9 @@ spark.hadoop.fs.s3a.secret.key minioadmin
 spark.hadoop.fs.s3a.endpoint http://minio:9000
 ```
 
-The spark cluster is now setup and ready to run.  In the next section we will run our pyspark application.
+* Note: The spark-defaults.conf file is used to configure the spark cluster to use the delta lake and minio.
+
+* Note: More information on modifying the bitnami/spark image can be found [here](https://github.com/bitnami/containers/blob/main/bitnami/spark/README.md#mount-a-custom-configuration-file)
 
 ## Running the Application
 
@@ -304,9 +311,25 @@ python src/main.py
 
 The application will create a dataframe and write a delta table to Minio.  It will then read the delta table from Minio and display the contents of the table.
 
-To view the underlying files of the delta table you can use the Minio web console.  The Minio web console can be accessed at [localhost:9001](http://localhost:9001/).  Use the default credentials `minioadmin/minioadmin` to login.
+Output:
+```console
++---+---+-------+----------+-------------------+
+|  4|5.0|string3|2000-03-01|2000-01-03 12:00:00|
+|  1|2.0|string1|2000-01-01|2000-01-01 12:00:00|
+|  2|3.0|string2|2000-02-01|2000-01-02 12:00:00|
++---+---+-------+----------+-------------------+
+```
 
-To view the spark connect job open the Spark UI at [localhost:4040](http://localhost:4040/) and click the Spark Connect tab.
+
+To view the underlying files of the delta table you can use the Minio web console.  
+
+The Minio web console can be accessed at [localhost:9001](http://localhost:9001/).  
+
+* Note: Use the default credentials `minioadmin/minioadmin` to login.
+
+To view the spark connect job open the Spark UI at [localhost:4040](http://localhost:4040/)
+
+* Note: The spark ui will contain a new tab called "Connect"
 
 
 ## Conclusion
