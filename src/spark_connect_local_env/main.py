@@ -5,7 +5,8 @@ from delta import *
 
 
 builder = SparkSession.builder.appName("devcontainer").remote("sc://spark:15002")
-spark = configure_spark_with_delta_pip(builder).getOrCreate()
+spark = builder.getOrCreate()
+# spark = configure_spark_with_delta_pip(builder).getOrCreate()
 
 # Create a DataFrame
 df = spark.createDataFrame(
@@ -25,9 +26,7 @@ df = spark.read.format("delta").load("s3a://delta-lake/my_table")
 # Display Delta Table
 df.show()
 
-try:
-    DeltaTable.forPath(spark, "s3a://delta-lake/my_table").toDF().show()
-except Exception as e:
-    print(e)
+DeltaTable.forPath(spark, "s3a://delta-lake/my_table").toDF().show()
+
 
 
