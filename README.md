@@ -285,12 +285,12 @@ Note: This is documented in the bitnami/spark image [here](https://github.com/bi
 4. Create a file called spark-defaults.conf in the .devcontainer/conf folder and add the following code to the spark-defaults.conf file:
 
 ```properties
-spark.sql.extensions             io.delta.sql.DeltaSparkSessionExtension
-spark.sql.catalog.spark_catalog  org.apache.spark.sql.delta.catalog.DeltaCatalog
-spark.hadoop.fs.s3a.path.style.access true
-spark.hadoop.fs.s3a.access.key minioadmin
-spark.hadoop.fs.s3a.secret.key minioadmin
-spark.hadoop.fs.s3a.endpoint http://minio:9000
+spark.sql.extensions                   io.delta.sql.DeltaSparkSessionExtension
+spark.sql.catalog.spark_catalog        org.apache.spark.sql.delta.catalog.DeltaCatalog
+spark.hadoop.fs.s3a.path.style.access  true
+spark.hadoop.fs.s3a.access.key         minioadmin
+spark.hadoop.fs.s3a.secret.key         minioadmin
+spark.hadoop.fs.s3a.endpoint           http://minio:9000
 ```
 
 * Note: The spark-defaults.conf file is used to configure the spark cluster to use the delta lake and minio.
