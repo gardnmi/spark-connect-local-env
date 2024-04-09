@@ -1,5 +1,8 @@
 # Spark Connect with Minio and Delta Lake
 
+![Image](https://i.imgur.com/o4YdA6V.jpeg)
+
+
 ## Summary
 
 This post will walk you through setting up a pyspark application that connects to a remote spark cluster using Spark Connect.  
