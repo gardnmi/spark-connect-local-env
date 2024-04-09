@@ -44,7 +44,7 @@ services:
     ports:
       - '4040:4040' # Spark UI           
       - '8080:8080' # Spark Master
-      - '7077:7077' # ??? I fogot what this is for...remove?
+      - '7077:7077' 
     volumes:
       - ./conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
 
